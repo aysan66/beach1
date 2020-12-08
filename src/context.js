@@ -1,6 +1,9 @@
 import { findAllByAltText } from '@testing-library/react'
 import React, { Component } from 'react'
-import items from "./data"
+//import items from "./data"
+import Client from './Contentful'
+
+
 const RoomContext=React.createContext()
 
  class RoomProvider extends Component {
@@ -20,13 +23,24 @@ const RoomContext=React.createContext()
      pets:false
     }
     //get data
+getData=async()=>{
+    try{
+        let response= await Client.getEntries({
+            content_type:"beachResortRoom"
+        });
+        let rooms=this.formatData(response.items)
+        let featuredrooms=rooms.filter(room=>room.featured===true)
+        let maxprice=Math.max(...rooms.map(item=>item.price))
+        let maxsize=Math.max(...rooms.map(item=>item.size))
+        this.setState({
+            rooms,featuredrooms,sortedRooms:rooms,loading:false,price:maxprice,maxprice,maxsize});
+    }catch(error){
+        console.log(error)
 
+    }
+}
 componentDidMount(){
-    let rooms=this.formatData(items)
-    let featuredrooms=rooms.filter(room=>room.featured===true)
-    let maxprice=Math.max(...rooms.map(item=>item.price))
-    let maxsize=Math.max(...rooms.map(item=>item.size))
-    this.setState({rooms,featuredrooms,sortedRooms:rooms,loading:false,price:maxprice,maxprice,maxsize})
+    this.getData()
 }
 formatData(items){
     let tempItems=items.map(item=>{

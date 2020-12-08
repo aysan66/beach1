@@ -7,6 +7,7 @@ import error from "./pages/error"
 import SingleRoom from './pages/SingleRoom';
 import './App.css';
 
+
 function App() {
   return( <>
   <Navbar/>
